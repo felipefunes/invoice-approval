@@ -2,7 +2,6 @@ services:
   - type: web
     name: invoice-approval
     runtime: static
-    plan: free
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     pullRequestPreviewsEnabled: false
