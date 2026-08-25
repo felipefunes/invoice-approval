@@ -442,7 +442,7 @@ function TeamView({ pending, selected, setSelectedId, submitTeamResponse, commen
       <div className="mx-auto max-w-md">
         <button
           onClick={() => setSelectedId(null)}
-          className="mb-4 text-sm text-slate-500 hover:text-slate-700"
+          className="-ml-2 mb-4 rounded-lg px-2 py-2 text-sm text-slate-500 hover:text-slate-700"
         >
           ← Volver a la lista
         </button>
@@ -549,16 +549,16 @@ function FinanceView({
   setReasonDraft,
 }) {
   return (
-    <div className="flex gap-6">
-      <div className="flex-1">
-        <div className="mb-4 flex items-end justify-between">
+    <div className="flex flex-col gap-6 sm:flex-row">
+      <div className="min-w-0 flex-1">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-lg font-semibold">Facturas recibidas</h1>
             <p className="text-sm text-slate-500">
               Ordenadas por urgencia: días corridos restantes antes del vencimiento legal.
             </p>
           </div>
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-center">
+          <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-2 sm:block sm:text-center">
             <p className="text-xl font-semibold text-red-700">{urgentCount}</p>
             <p className="text-xs text-red-600">vencen en ≤ 2 días</p>
           </div>
@@ -569,10 +569,36 @@ function FinanceView({
           onChange={(e) => setSupplierFilter(e.target.value)}
           placeholder="Filtrar por RUT o proveedor…"
           aria-label="Filtrar por RUT o proveedor"
-          className="mb-3 w-full max-w-xs rounded-lg border border-slate-200 px-3 py-2 text-sm"
+          className="mb-3 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm sm:max-w-xs sm:py-2"
         />
 
-        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        {/* Mobile: card list — a 6-column table forces horizontal scrolling
+            on a phone, which is unusable when someone needs to act fast on
+            an invoice about to expire. Desktop keeps the denser table. */}
+        <div className="space-y-3 sm:hidden">
+          {invoices.map((inv) => (
+            <button
+              key={inv.id}
+              onClick={() => setSelectedId(inv.id)}
+              className="flex w-full items-start justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 text-left active:bg-slate-50"
+            >
+              <div className="min-w-0 flex-1">
+                <UrgencyBadge inv={inv} />
+                <p className="mt-2 truncate font-medium">{inv.companyName}</p>
+                <p className="truncate font-mono text-xs text-slate-400">
+                  {inv.rut} · Folio {inv.folio}
+                </p>
+                <p className="mt-1 font-mono text-sm">{formatCLP(inv.amount)}</p>
+                <div className="mt-1.5">
+                  <TeamStatusTag status={inv.teamStatus} />
+                </div>
+              </div>
+              <ChevronRight size={18} className="mt-1 shrink-0 text-slate-300" />
+            </button>
+          ))}
+        </div>
+
+        <div className="hidden overflow-x-auto rounded-xl border border-slate-200 bg-white sm:block">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-left text-xs uppercase tracking-wide text-slate-400">
@@ -656,7 +682,11 @@ function DetailDrawer({ inv, onClose, updateInvoice, setPendingAction, reasonDra
             <h2 className="font-semibold">{inv.companyName}</h2>
             <p className="font-mono text-xs text-slate-400">{inv.rut}</p>
           </div>
-          <button onClick={onClose} aria-label="Cerrar panel de detalle" className="text-slate-400 hover:text-slate-600">
+          <button
+            onClick={onClose}
+            aria-label="Cerrar panel de detalle"
+            className="-m-2 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+          >
             <X size={18} />
           </button>
         </div>
@@ -793,17 +823,17 @@ function ConfirmModal({ pendingAction, onCancel, onConfirm }) {
             factoring. ¿Confirmas?
           </p>
         )}
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
           <button
             autoFocus
             onClick={onCancel}
-            className="flex-1 rounded-lg border border-slate-200 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            className="flex-1 rounded-lg border border-slate-200 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 sm:py-2"
           >
             Cancelar
           </button>
           <button
             onClick={onConfirm}
-            className={`flex-1 rounded-lg py-2 text-sm font-medium text-white ${
+            className={`flex-1 rounded-lg py-3 text-sm font-medium text-white sm:py-2 ${
               isClaim ? "bg-red-600 hover:bg-red-700" : "bg-indigo-700 hover:bg-indigo-800"
             }`}
           >
