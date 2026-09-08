@@ -2,3 +2,11 @@ node_modules
 dist
 .DS_Store
 *.log
+
+# Secrets — never tracked, except .env.example (placeholders only)
+.env
+.env.*
+!.env.example
+
+# Private, per-developer notes — never tracked
+CLAUDE.local.md
